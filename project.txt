@@ -1,0 +1,155 @@
+🎓 Project Title: Smart Student Team Clustering System
+💡 Project Overview:
+This project aims to simplify and automate the process of grouping students into balanced teams (Topper, Average, Duller) based on their academic performance. Balanced teams can be used for project work, seminars, or group tasks. The system ensures diversity in learning ability within each team, promoting peer learning and collaboration.
+
+🧰 Tech Stack:
+Frontend: React.js
+
+Backend: Python (Flask or FastAPI)
+
+Database: MongoDB
+
+Authentication: JWT or Session-based
+
+Hosting (Optional): Render / Vercel for frontend, Railway / Heroku for backend
+
+🔐 User Roles:
+1. HOD (Head of Department)
+One HOD per branch: CSE, IT, ECE, EEE, MECH
+
+Each HOD manages:
+
+4 Years (1st to 4th)
+
+Each Year has 4 Sections (A, B, C, D)
+
+Each Year contains 2 Semesters
+
+2. Student
+Can log in and view:
+
+Their semester marks
+
+Team batch they are assigned to (Topper/Average/Duller)
+
+✨ Key Features:
+🔑 Login System:
+Separate login for HOD and Students
+
+Secure authentication (JWT recommended)
+
+🧑‍🏫 HOD Dashboard:
+Add new student data (Name, Roll No, Branch, Year, Section, Semester-wise marks)
+
+View students year-wise and section-wise
+
+Automatically cluster students into balanced teams based on marks
+
+View and edit team clusters manually
+
+Remove or update student info if needed
+
+Filter students by:
+
+Year
+
+Section
+
+Semester
+
+Performance type (Topper/Average/Duller)
+
+👨‍🎓 Student Dashboard:
+View personal profile
+
+View semester-wise marks
+
+View the team (batch) they are grouped into
+
+⚙️ How the Team Clustering Works (Non-ML):
+Define simple thresholds for each category:
+
+Topper: 80% and above
+
+Average: 60% to 79%
+
+Duller: Below 60%
+
+Sort students based on average marks
+
+Group students into teams:
+
+Each team = 1 Topper + 1 Average + 1 Duller (or similar depending on size)
+
+📁 Project Structure:
+📦 Frontend (React)
+LoginPage.js
+
+HODDashboard.js
+
+StudentDashboard.js
+
+AddStudentForm.js
+
+ViewClusters.js
+
+Navbar.js
+
+📦 Backend (Python Flask/FastAPI)
+app.py
+
+routes/hod.py
+
+routes/student.py
+
+models/student.py
+
+utils/clustering.py
+
+📦 MongoDB Collections
+users (HODs and Students with role)
+
+students (Student records with marks and cluster)
+
+clusters (Generated batch teams per section/semester)
+
+📈 Extra Suggestions to Impress Lecturers:
+✅ Add Features
+Export clusters to Excel or PDF
+
+Show pie/bar charts (performance distribution) using Chart.js in React
+
+Option to backup/download all student data
+
+Notification when students are reassigned to new teams
+
+✅ UI Ideas
+Clean Material UI or Bootstrap styling
+
+Add a step-by-step wizard when entering student data
+
+Dashboard cards showing:
+
+Total Students
+
+No. of Teams
+
+Top 5 performers
+
+Count of each category (Topper, Average, Duller)
+
+📋 Future Scope
+Apply Machine Learning later to automate and optimize clustering
+
+Add attendance and behavior data to improve clustering
+
+Integrate with college LMS or Google Classroom
+
+🧪 Testing Ideas
+Add dummy data for all 5 branches
+
+Show sample team generation
+
+Test manual editing of clusters
+
+Test both HOD and Student logins with mock credentials
