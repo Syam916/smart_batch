@@ -28,6 +28,7 @@ const LoginPage = ({ login }) => {
       const response = await axios.post('http://localhost:5000/api/login', {
         username: formData.username,
         password: formData.password
+
       }, {
         withCredentials: true // Important for cookies/sessions
       });

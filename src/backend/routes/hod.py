@@ -10,49 +10,44 @@ hod_bp = Blueprint('hod', __name__)
 from db_config import db
 
 @hod_bp.route('/students', methods=['GET'])
-@login_required
-def get_students(current_user):
-    if current_user['role'] != 'hod':
-        return jsonify({'message': 'Unauthorized'}), 403
-    
+def get_students():
+    """Get filtered students"""
     branch = request.args.get('branch')
     year = request.args.get('year')
     section = request.args.get('section')
-    semester = request.args.get('semester')
     
-    # Debug information
-    print(f"Filters - branch: {branch}, year: {year}, section: {section}, semester: {semester}")
+    # Debug the received filters
+    print(f"Received filters - branch: {branch}, year: {year}, section: {section}")
     
+    # Build the MongoDB query
     query = {}
-    if year:
-        query['year'] = int(year) if year.isdigit() else year
+    if year and year.isdigit():
+        query['year'] = int(year)
     if section:
         query['section'] = section
-    # For semester, check either sem1 or sem2 field
-    if semester and semester.isdigit():
-        sem_num = int(semester)
-        # We'll handle the semester filter in the processing stage
     
     students = []
     
     # If a specific branch is selected, query only that collection
     if branch:
         if branch in db.list_collection_names():
+            print(f"Querying {branch} collection with filter: {query}")
             branch_students = list(db[branch].find(query))
             for student in branch_students:
                 student['_id'] = str(student['_id'])
                 student['branch'] = branch  # Add branch info for display
-                students.append(format_student_data(student, semester))
+                students.append(student)
     else:
         # If no branch is selected, query all branch collections
         branch_collections = ['civil', 'cse', 'ece', 'eee', 'mech']
         for branch_name in branch_collections:
             if branch_name in db.list_collection_names():
+                print(f"Querying {branch_name} collection with filter: {query}")
                 branch_students = list(db[branch_name].find(query))
                 for student in branch_students:
                     student['_id'] = str(student['_id'])
                     student['branch'] = branch_name  # Add branch info
-                    students.append(format_student_data(student, semester))
+                    students.append(student)
     
     print(f"Found {len(students)} students matching the criteria")
     
