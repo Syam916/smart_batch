@@ -767,4 +767,78 @@ button:hover {
 
 .batch-card.swap-mode:hover {
   transform: translateY(-4px);
+}
+
+/* Add these styles to your ViewClusters.css file */
+
+.save-batch-container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.save-batch-button {
+  padding: 12px 24px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 180px;
+}
+
+.save-batch-button:hover {
+  background-color: #3e8e41;
+}
+
+.save-batch-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.save-batch-button.has-changes {
+  background-color: #ff9800;
+}
+
+.save-batch-button.has-changes:hover {
+  background-color: #e68a00;
+}
+
+.changes-warning {
+  margin-top: 10px;
+  color: #ff5722;
+  font-size: 14px;
+  text-align: center;
+}
+
+.student-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.student-details {
+  display: flex;
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.student-roll, .student-rank {
+  margin-right: 10px;
+}
+
+.student-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
 } 

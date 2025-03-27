@@ -27,6 +27,48 @@ const calculateAvg = (student) => {
   return count > 0 ? Math.round(total / count) : 0;
 };
 
+// Array of Indian first names
+const indianFirstNames = [
+  'Aarav', 'Vivaan', 'Aditya', 'Vihaan', 'Arjun', 'Reyansh', 'Ayaan', 'Atharva', 'Krishna', 'Ishaan', 
+  'Shaurya', 'Dhruv', 'Kabir', 'Darsh', 'Krish', 'Dev', 'Yug', 'Rudra', 'Aarush', 'Yuvan',
+  'Aanya', 'Aadhya', 'Ananya', 'Pari', 'Anika', 'Navya', 'Sara', 'Kiara', 'Myra', 'Diya', 
+  'Riya', 'Ahana', 'Ira', 'Disha', 'Avni', 'Misha', 'Aditi', 'Saanvi', 'Divya', 'Prisha'
+];
+
+// Array of Indian last names
+const indianLastNames = [
+  'Sharma', 'Verma', 'Patel', 'Gupta', 'Singh', 'Kumar', 'Joshi', 'Rao', 'Malhotra', 'Reddy',
+  'Nair', 'Agarwal', 'Mehta', 'Iyer', 'Shah', 'Pillai', 'Desai', 'Choudhury', 'Chatterjee', 'Banerjee',
+  'Mukherjee', 'Mishra', 'Chauhan', 'Yadav', 'Tiwari', 'Kapoor', 'Bhat', 'Das', 'Patil', 'Kaur'
+];
+
+// Helper function to get random Indian name
+const getRandomIndianName = () => {
+  const firstName = indianFirstNames[Math.floor(Math.random() * indianFirstNames.length)];
+  const lastName = indianLastNames[Math.floor(Math.random() * indianLastNames.length)];
+  return { firstName, lastName };
+};
+
+// Keep track of used usernames to avoid duplicates
+const usedUsernames = new Set();
+
+// Helper function to generate a unique username
+const generateUniqueUsername = (firstName, lastName) => {
+  let baseUsername = `${firstName.toLowerCase()}_${lastName.toLowerCase()}`;
+  let username = baseUsername;
+  let counter = 1;
+  
+  // If username is already taken, add a number suffix until we find a unique one
+  while (usedUsernames.has(username)) {
+    username = `${baseUsername}${counter}`;
+    counter++;
+  }
+  
+  // Add the new username to our set of used usernames
+  usedUsernames.add(username);
+  return username;
+};
+
 // Generate HOD data for each branch
 async function generateHODs() {
   const branches = ['cse', 'ece', 'mech', 'civil', 'eee'];
@@ -69,14 +111,16 @@ async function generateStudents() {
         for (let i = 1; i <= 40; i++) {
           // Create basic user info
           const rollNumber = `${branch}${year}${section}${i.toString().padStart(2, '0')}`;
-          const firstName = faker.name.firstName();
-          const lastName = faker.name.lastName();
-          const username = `${firstName.toLowerCase()}_${lastName.toLowerCase()}`;
+          
+          // Use Indian names instead of faker
+          const { firstName, lastName } = getRandomIndianName();
+          const username = generateUniqueUsername(firstName, lastName);
           
           // Create user record for user_data collection
           const userRecord = new UserModel({
             username: username,
-            email: `${username}@smartbatch.edu`,
+            email: `${username}@jits.edu`,
+            rollNumber: rollNumber,
             password: await bcrypt.hash('student123', 10),
             role: 'student',
             branch: branch
@@ -87,6 +131,7 @@ async function generateStudents() {
           // Create branch-specific student record
           const studentData = {
             username: username,
+            rollNumber: rollNumber, // Add roll number to branch-specific records
             year: year,
             section: section,
             branch: branch
@@ -94,7 +139,7 @@ async function generateStudents() {
           
           // Add semester marks based on student's year
           for (let sem = 1; sem <= year * 2; sem++) {
-            studentData[`sem${sem}`] = Math.floor(Math.random() * 41) + 60; // Random marks between 60-100
+            studentData[`sem${sem}`] = Math.floor(Math.random() * 41) + 55; // Random marks between 55-95
           }
           
           // Calculate average
@@ -105,7 +150,7 @@ async function generateStudents() {
           const branchRecord = new BranchModel(studentData);
           await branchRecord.save();
           
-          console.log(`Created student: ${username} in ${branch} branch, Year ${year}, Section ${section}`);
+          console.log(`Created student: ${username} (${rollNumber}) in ${branch} branch, Year ${year}, Section ${section}`);
         }
       }
     }

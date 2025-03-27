@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { FaUser, FaFilter, FaChartPie } from 'react-icons/fa';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Pie, Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
 import './HODDashboard.css';
 
 // Register the required Chart.js components
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
 
 const HODDashboard = ({ token }) => {
   const [filters, setFilters] = useState({
@@ -25,11 +25,23 @@ const HODDashboard = ({ token }) => {
       Topper: 0,
       Average: 0,
       Duller: 0
+    },
+    averageMarks: 0,
+    highestMarks: 0,
+    lowestMarks: 0,
+    passRate: 0,
+    marksDistribution: {
+      below40: 0,
+      '40to50': 0,
+      '50to60': 0,
+      '60to70': 0,
+      '70to85': 0,
+      above85: 0
     }
   });
   const [loading, setLoading] = useState(true);
 
-  // Chart data setup
+  // Updated chart data setup
   const chartData = {
     labels: ['Topper', 'Average', 'Duller'],
     datasets: [
@@ -48,6 +60,41 @@ const HODDashboard = ({ token }) => {
           'rgba(75, 192, 192, 1)',
           'rgba(255, 206, 86, 1)',
           'rgba(255, 99, 132, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // New detailed marks distribution chart
+  const marksDistributionData = {
+    labels: ['<40%', '40-50%', '50-60%', '60-70%', '70-85%', '>85%'],
+    datasets: [
+      {
+        label: 'Number of Students',
+        data: [
+          stats.marksDistribution.below40,
+          stats.marksDistribution['40to50'],
+          stats.marksDistribution['50to60'],
+          stats.marksDistribution['60to70'],
+          stats.marksDistribution['70to85'],
+          stats.marksDistribution.above85,
+        ],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.6)',
+          'rgba(255, 159, 64, 0.6)',
+          'rgba(255, 205, 86, 0.6)',
+          'rgba(75, 192, 192, 0.6)',
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(153, 102, 255, 0.6)',
+        ],
+        borderColor: [
+          'rgb(255, 99, 132)',
+          'rgb(255, 159, 64)',
+          'rgb(255, 205, 86)',
+          'rgb(75, 192, 192)',
+          'rgb(54, 162, 235)',
+          'rgb(153, 102, 255)',
         ],
         borderWidth: 1,
       },
@@ -116,28 +163,93 @@ const HODDashboard = ({ token }) => {
       
       try {
         const data = JSON.parse(responseText);
-        setStudents(data);
         
-        // Calculate statistics
+        // Apply performance classification based on marks
+        const processedStudents = data.map(student => {
+          const avgMarks = student.average_marks || 0;
+          let performanceType = '';
+          
+          if (avgMarks > 85) {
+            performanceType = 'Topper';
+          } else if (avgMarks >= 71 && avgMarks <= 85) {
+            performanceType = 'Average';
+          } else {
+            performanceType = 'Duller';
+          }
+          
+          return {
+            ...student,
+            performance_type: performanceType
+          };
+        });
+        
+        setStudents(processedStudents);
+        
+        // Calculate detailed statistics
         const performanceBreakdown = {
           Topper: 0, 
           Average: 0,
           Duller: 0
         };
         
-        data.forEach(student => {
-          if (student.performance_type) {
-            performanceBreakdown[student.performance_type]++;
+        let totalMarks = 0;
+        let highestMark = 0;
+        let lowestMark = 100;
+        let passCount = 0;
+        const marksDistribution = {
+          below40: 0,
+          '40to50': 0,
+          '50to60': 0,
+          '60to70': 0,
+          '70to85': 0,
+          above85: 0
+        };
+        
+        processedStudents.forEach(student => {
+          const marks = student.average_marks || 0;
+          
+          // Performance breakdown
+          performanceBreakdown[student.performance_type]++;
+          
+          // Calculate total marks for average
+          totalMarks += marks;
+          
+          // Find highest and lowest marks
+          if (marks > highestMark) highestMark = marks;
+          if (marks < lowestMark && marks > 0) lowestMark = marks;
+          
+          // Pass rate (assuming passing mark is 40%)
+          if (marks >= 40) passCount++;
+          
+          // Marks distribution
+          if (marks < 40) {
+            marksDistribution.below40++;
+          } else if (marks >= 40 && marks < 50) {
+            marksDistribution['40to50']++;
+          } else if (marks >= 50 && marks < 60) {
+            marksDistribution['50to60']++;
+          } else if (marks >= 60 && marks < 70) {
+            marksDistribution['60to70']++;
+          } else if (marks >= 70 && marks < 85) {
+            marksDistribution['70to85']++;
+          } else if (marks >= 85) {
+            marksDistribution.above85++;
           }
         });
         
+        // If no students have marks, set lowest to 0
+        if (lowestMark === 100 && processedStudents.length > 0) {
+          lowestMark = 0;
+        }
+        
         setStats({
-          totalStudents: data.length,
-          performanceBreakdown: {
-            Topper: performanceBreakdown.Topper || 0,
-            Average: performanceBreakdown.Average || 0,
-            Duller: performanceBreakdown.Duller || 0
-          }
+          totalStudents: processedStudents.length,
+          performanceBreakdown: performanceBreakdown,
+          averageMarks: processedStudents.length > 0 ? +(totalMarks / processedStudents.length).toFixed(2) : 0,
+          highestMarks: highestMark,
+          lowestMarks: lowestMark,
+          passRate: processedStudents.length > 0 ? +((passCount / processedStudents.length) * 100).toFixed(2) : 0,
+          marksDistribution: marksDistribution
         });
       } catch (parseError) {
         console.error('Error parsing students JSON:', parseError);
@@ -221,12 +333,36 @@ const HODDashboard = ({ token }) => {
         <div className="loading">Loading student data...</div>
       ) : (
         <div className="dashboard-content">
-          <div className="stats-container">
+          {/* Performance Summary Cards */}
+          <div className="stats-overview">
             <div className="stats-card total-students">
               <h3>Total Students</h3>
               <div className="stats-value">{stats.totalStudents}</div>
             </div>
             
+            <div className="stats-card average-marks">
+              <h3>Average Marks</h3>
+              <div className="stats-value">{stats.averageMarks}%</div>
+            </div>
+            
+            <div className="stats-card highest-marks">
+              <h3>Highest Marks</h3>
+              <div className="stats-value">{stats.highestMarks}%</div>
+            </div>
+            
+            <div className="stats-card lowest-marks">
+              <h3>Lowest Marks</h3>
+              <div className="stats-value">{stats.lowestMarks}%</div>
+            </div>
+            
+            <div className="stats-card pass-rate">
+              <h3>Pass Rate</h3>
+              <div className="stats-value">{stats.passRate}%</div>
+            </div>
+          </div>
+          
+          {/* Performance Distribution Chart */}
+          <div className="charts-container">
             <div className="stats-card performance-breakdown">
               <h3>Performance Distribution</h3>
               <div className="stats-chart">
@@ -235,21 +371,70 @@ const HODDashboard = ({ token }) => {
               <div className="stats-legend">
                 <div className="legend-item">
                   <span className="legend-color topper"></span>
-                  <span>Toppers: {stats.performanceBreakdown.Topper}</span>
+                  <span>Toppers ({'>'}85%): {stats.performanceBreakdown.Topper}</span>
                 </div>
                 <div className="legend-item">
                   <span className="legend-color average"></span>
-                  <span>Average: {stats.performanceBreakdown.Average}</span>
+                  <span>Average (71-85%): {stats.performanceBreakdown.Average}</span>
                 </div>
                 <div className="legend-item">
                   <span className="legend-color duller"></span>
-                  <span>Duller: {stats.performanceBreakdown.Duller}</span>
+                  <span>Duller ({'<'}71%): {stats.performanceBreakdown.Duller}</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Detailed Marks Distribution */}
+            <div className="stats-card marks-distribution">
+              <h3>Detailed Marks Distribution</h3>
+              <div className="stats-chart">
+                <Bar 
+                  data={marksDistributionData} 
+                  options={{ 
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        display: false
+                      },
+                      title: {
+                        display: true,
+                        text: 'Student Marks Distribution'
+                      }
+                    }
+                  }} 
+                />
+              </div>
+              <div className="distribution-summary">
+                <div className="summary-item">
+                  <span className="mark-range below40">Below 40%:</span>
+                  <span className="count">{stats.marksDistribution.below40} students</span>
+                </div>
+                <div className="summary-item">
+                  <span className="mark-range range40-50">40-50%:</span>
+                  <span className="count">{stats.marksDistribution['40to50']} students</span>
+                </div>
+                <div className="summary-item">
+                  <span className="mark-range range50-60">50-60%:</span>
+                  <span className="count">{stats.marksDistribution['50to60']} students</span>
+                </div>
+                <div className="summary-item">
+                  <span className="mark-range range60-70">60-70%:</span>
+                  <span className="count">{stats.marksDistribution['60to70']} students</span>
+                </div>
+                <div className="summary-item">
+                  <span className="mark-range range70-85">70-85%:</span>
+                  <span className="count">{stats.marksDistribution['70to85']} students</span>
+                </div>
+                <div className="summary-item">
+                  <span className="mark-range above85">Above 85%:</span>
+                  <span className="count">{stats.marksDistribution.above85} students</span>
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="students-table-container">
+          {/* Students List Table - uncomment if needed */}
+          {/* <div className="students-table-container">
             <h3>Students List</h3>
             <table className="students-table">
               <thead>
@@ -267,17 +452,17 @@ const HODDashboard = ({ token }) => {
                 {students.map((student) => (
                   <tr key={student._id} className={`performance-${student.performance_type}`}>
                     <td>{student.name || student.username || 'N/A'}</td>
-                    <td>{student.roll_no || 'N/A'}</td>
+                    <td>{student.rollNumber || 'N/A'}</td>
                     <td>{student.branch || 'N/A'}</td>
                     <td>{student.section || 'N/A'}</td>
                     <td>{student.current_semester || 'N/A'}</td>
-                    <td>{student.average_marks ? student.average_marks.toFixed(2) : 'N/A'}</td>
+                    <td>{student.average_marks ? student.average_marks.toFixed(2) + '%' : 'N/A'}</td>
                     <td>{student.performance_type || 'N/A'}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
+          </div> */}
         </div>
       )}
     </div>

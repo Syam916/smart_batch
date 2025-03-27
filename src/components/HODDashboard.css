@@ -216,4 +216,95 @@
 
 .performance-duller {
   background-color: rgba(255, 99, 132, 0.1);
+}
+
+.stats-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stats-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  text-align: center;
+}
+
+.stats-value {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #4361ee;
+}
+
+.charts-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.performance-breakdown, .marks-distribution {
+  min-height: 400px;
+}
+
+.stats-legend, .distribution-summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.legend-item, .summary-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend-color, .mark-range {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.legend-color.topper, .mark-range.above85 {
+  background-color: rgba(75, 192, 192, 0.6);
+}
+
+.legend-color.average, .mark-range.range70-85 {
+  background-color: rgba(255, 206, 86, 0.6);
+}
+
+.legend-color.duller, .mark-range.below40 {
+  background-color: rgba(255, 99, 132, 0.6);
+}
+
+.mark-range.range40-50 {
+  background-color: rgba(255, 159, 64, 0.6);
+}
+
+.mark-range.range50-60 {
+  background-color: rgba(255, 205, 86, 0.6);
+}
+
+.mark-range.range60-70 {
+  background-color: rgba(75, 192, 192, 0.6);
+}
+
+.performance-Topper {
+  background-color: rgba(75, 192, 192, 0.1);
+}
+
+.performance-Average {
+  background-color: rgba(255, 206, 86, 0.1);
+}
+
+.performance-Duller {
+  background-color: rgba(255, 99, 132, 0.1);
 } 

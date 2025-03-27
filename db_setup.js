@@ -17,12 +17,14 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ['student', 'hod'], required: true },
   branch: { type: String, enum: ['cse', 'ece', 'mech', 'civil', 'eee'] }
+  
 });
 
 // Create schemas for each branch
 const createBranchSchema = (branchName) => {
   return new mongoose.Schema({
     username: { type: String, required: true, unique: true },
+    rollNumber: { type: String, required: true, unique: true },
     year: { type: Number, required: true, min: 1, max: 4 },
     section: { type: String, required: true },
     branch: { type: String, default: branchName, required: true },

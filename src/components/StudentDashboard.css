@@ -1,12 +1,13 @@
 .student-dashboard {
   padding: 2rem;
   margin-top: 60px;
-  background-color: #f5f7fa;
+  background-color: #f8f9fa;
   min-height: 100vh;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 .dashboard-header {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .student-profile-card {
@@ -100,20 +101,40 @@
 
 .marks-table {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .marks-table th,
 .marks-table td {
-  padding: 1rem;
+  padding: 1rem 1.5rem;
   text-align: left;
-  border-bottom: 1px solid #ddd;
 }
 
 .marks-table th {
-  background-color: #f8f9fa;
+  background-color: #3498db;
+  color: white;
   font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  border: none;
+}
+
+.marks-table td {
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.marks-table tr:last-child td {
+  border-bottom: none;
+}
+
+.marks-table tbody tr:hover {
+  background-color: rgba(52, 152, 219, 0.05);
 }
 
 .team-members {
@@ -155,85 +176,185 @@
 
 .loading-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 70vh;
   color: #7f8c8d;
+}
+
+.loading-container .spinner-border {
+  color: #3498db;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
 }
 
 .error-container {
   text-align: center;
-  padding: 2rem;
+  padding: 2.5rem;
   color: #e74c3c;
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   margin-top: 2rem;
+  border-left: 5px solid #e74c3c;
 }
 
 .dashboard-title {
-  color: #333;
+  color: #2c3e50;
   text-align: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #3f51b5;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 3px solid #3498db;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
-.student-info-card, .performance-card, .marks-card {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  margin-bottom: 20px;
-  transition: transform 0.3s ease;
+.student-info-card, 
+.performance-card, 
+.marks-card,
+.debug-card {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  margin-bottom: 25px;
+  transition: all 0.3s ease;
+  border: none;
+  overflow: hidden;
 }
 
-.student-info-card:hover, .performance-card:hover, .marks-card:hover {
+.student-info-card:hover, 
+.performance-card:hover, 
+.marks-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .student-info-card .card-header, 
 .performance-card .card-header,
-.marks-card .card-header {
-  background-color: #3f51b5;
+.marks-card .card-header,
+.debug-card .card-header {
+  background-color: #3498db;
   color: white;
-  font-weight: 500;
+  font-weight: 600;
+  padding: 1rem 1.5rem;
+  letter-spacing: 0.5px;
+  border: none;
 }
 
 .student-info-card .row {
-  padding: 5px 0;
+  padding: 10px 20px;
+  align-items: center;
 }
 
 .student-info-card .row:nth-child(even) {
-  background-color: rgba(63, 81, 181, 0.05);
+  background-color: rgba(52, 152, 219, 0.05);
 }
 
-.marks-card table thead {
-  background-color: #e0e0e0;
+.student-info-card strong {
+  color: #34495e;
+  font-weight: 600;
 }
 
-.marks-card table tbody tr:hover {
-  background-color: rgba(63, 81, 181, 0.1);
+.performance-card .card-body {
+  padding: 1.5rem;
 }
 
-/* Add responsive adjustments */
+.performance-card .row {
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.performance-card .row:last-child {
+  border-bottom: none;
+}
+
+.performance-card strong {
+  color: #34495e;
+  font-weight: 600;
+}
+
+.good-performance {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.average-performance {
+  color: #f39c12;
+  font-weight: 600;
+}
+
+.poor-performance {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.debug-card {
+  background-color: #fff;
+  margin-bottom: 30px;
+}
+
+.debug-card .card-header {
+  background-color: #7f8c8d;
+}
+
+.debug-card pre {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: #34495e;
+  max-height: 300px;
+  overflow: auto;
+}
+
+@media (max-width: 992px) {
+  .student-dashboard {
+    padding: 1.5rem;
+  }
+  
+  .dashboard-title {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
-  .student-dashboard .container {
-    padding: 0 10px;
+  .student-dashboard {
+    padding: 1rem;
   }
   
   .dashboard-title {
     font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .student-info-card .row,
+  .performance-card .row {
+    padding: 10px 15px;
+  }
+  
+  .debug-card pre {
+    font-size: 0.75rem;
   }
 }
 
-/* Add styles for good/average/poor performance */
-.good-performance {
-  color: #28a745;
-}
-
-.average-performance {
-  color: #ffc107;
-}
-
-.poor-performance {
-  color: #dc3545;
+@media (max-width: 576px) {
+  .dashboard-title {
+    font-size: 1.35rem;
+  }
+  
+  .student-info-card .card-header, 
+  .performance-card .card-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .student-info-card .row {
+    display: block;
+  }
+  
+  .student-info-card [class*="col-"] {
+    margin-bottom: 0.5rem;
+  }
 } 
