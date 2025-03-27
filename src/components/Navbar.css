@@ -4,7 +4,7 @@
   align-items: center;
   background-color: #2c3e50;
   color: white;
-  padding: 0.8rem 2rem;
+  padding: 1rem 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: fixed;
   top: 0;
@@ -22,41 +22,54 @@
 }
 
 .logo-icon {
-  font-size: 2rem;
+  font-size: 1.8rem;
   color: #3498db;
 }
 
 .navbar-links {
   display: flex;
-  align-items: center;
   gap: 1.5rem;
+  align-items: center;
 }
 
-.navbar-links a, .navbar-links button {
+.navbar-links a {
   color: white;
   text-decoration: none;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  transition: all 0.3s ease;
+  transition: color 0.3s;
 }
 
 .navbar-links a:hover {
-  background-color: #34495e;
+  color: #3498db;
 }
 
 .logout-btn {
   background: none;
-  border: 1px solid #e74c3c;
-  color: #e74c3c;
+  border: none;
+  color: white;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 1rem;
-  transition: all 0.3s ease;
+  padding: 0;
+  transition: color 0.3s;
 }
 
 .logout-btn:hover {
-  background-color: #e74c3c;
-  color: white;
+  color: #e74c3c;
+}
+
+.signup-link {
+  background-color: #3498db;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.3s !important;
+}
+
+.signup-link:hover {
+  background-color: #2980b9;
+  color: white !important;
 } 

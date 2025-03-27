@@ -23,7 +23,6 @@ from routes.hod import hod_bp
 from routes.student_routes import student_bp
  
 # Register blueprints
-# logger.debug(f"Registering hod_bp with url_prefix='/api/hod'")
 app.register_blueprint(hod_bp, url_prefix='/api/hod')
 app.register_blueprint(student_bp)
  

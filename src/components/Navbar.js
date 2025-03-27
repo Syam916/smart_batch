@@ -10,7 +10,7 @@ const Navbar = ({ auth = {}, logout }) => {
     <nav className="navbar">
       <div className="navbar-logo">
         <FaGraduationCap className="logo-icon" />
-        <span>Smart Batch</span>
+        <span>Gradify</span>
       </div>
       <div className="navbar-links">
         {isAuthenticated ? (
@@ -37,7 +37,12 @@ const Navbar = ({ auth = {}, logout }) => {
             </button>
           </>
         ) : (
-          <Link to="/login">Login</Link>
+          <>
+            <Link to="/login">Login</Link>
+            <Link to="/hod-signup" className="signup-link">
+              <FaUserPlus /> HOD Signup
+            </Link>
+          </>
         )}
       </div>
     </nav>

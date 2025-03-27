@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import Navbar from './components/Navbar';
 import LoginPage from './components/LoginPage';
+import HODSignup from './components/HODSignup';
 import HODDashboard from './components/HODDashboard';
 import StudentDashboard from './components/StudentDashboard';
 import AddStudentForm from './components/AddStudentForm';
@@ -61,68 +62,18 @@ function App() {
   };
 
   return (
-    <div className="app">
-      <ToastContainer />
+    <div className="App">
       <Navbar auth={auth} logout={logout} />
-      <div className="container">
-        <Routes>
-          <Route exact path="/" element={
-            auth.isAuthenticated ? (
-              auth.role === 'hod' ? (
-                <Navigate to="/hod-dashboard" replace />
-              ) : (
-                <Navigate to="/student-dashboard" replace />
-              )
-            ) : (
-              <LoginPage login={login} />
-            )
-          } />
-          
-          <Route path="/login" element={
-            auth.isAuthenticated ? <Navigate to="/" replace /> : <LoginPage login={login} />
-          } />
-          
-          <Route path="/hod-dashboard" element={
-            auth.isAuthenticated && auth.role === 'hod' ? (
-              <HODDashboard token={auth.userId} />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          } />
-          
-          <Route path="/student-dashboard" element={
-            auth.isAuthenticated && auth.role === 'student' ? (
-              <StudentDashboard token={auth.userId} />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          } />
-          
-          <Route path="/add-student" element={
-            auth.isAuthenticated && auth.role === 'hod' ? (
-              <AddStudentForm token={auth.userId} />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          } />
-          
-          <Route path="/edit-student/:id" element={
-            auth.isAuthenticated && auth.role === 'hod' ? (
-              <AddStudentForm token={auth.userId} isEdit={true} />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          } />
-          
-          <Route path="/view-clusters" element={
-            auth.isAuthenticated && auth.role === 'hod' ? (
-              <ViewClusters token={auth.userId} />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          } />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/login" element={!auth.isAuthenticated ? <LoginPage login={login} /> : <Navigate to={auth.role === 'hod' ? '/hod-dashboard' : '/student-dashboard'} />} />
+        <Route path="/hod-signup" element={!auth.isAuthenticated ? <HODSignup /> : <Navigate to="/hod-dashboard" />} />
+        <Route path="/hod-dashboard" element={auth.isAuthenticated && auth.role === 'hod' ? <HODDashboard token={auth.userId} /> : <Navigate to="/login" />} />
+        <Route path="/student-dashboard" element={auth.isAuthenticated && auth.role === 'student' ? <StudentDashboard /> : <Navigate to="/login" />} />
+        <Route path="/add-student" element={auth.isAuthenticated && auth.role === 'hod' ? <AddStudentForm token={auth.userId} /> : <Navigate to="/login" />} />
+        <Route path="/view-clusters" element={auth.isAuthenticated ? <ViewClusters token={auth.userId} /> : <Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to={auth.isAuthenticated ? (auth.role === 'hod' ? '/hod-dashboard' : '/student-dashboard') : '/login'} />} />
+      </Routes>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 }

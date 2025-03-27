@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaUser, FaFilter, FaChartPie } from 'react-icons/fa';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import axios from 'axios';
 import './HODDashboard.css';
 
 // Register the required Chart.js components
@@ -56,36 +57,23 @@ const HODDashboard = ({ token }) => {
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilters({ ...filters, [name]: value });
+    setFilters(prev => ({ ...prev, [name]: value }));
   };
 
   const fetchFilters = async () => {
     try {
-      // Make sure the URL is correct - must match your Flask routes
-      const response = await fetch('http://127.0.0.1:5000/api/hod/filters', {
-        method: 'GET',
+      const response = await axios.get('http://localhost:5000/api/hod/filters', {
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
+          'Content-Type': 'application/json'
+        }
       });
       
-      console.log('Filter response status:', response.status);
-      const responseText = await response.text();
-      console.log('Raw response:', responseText);
-      
-      try {
-        const data = JSON.parse(responseText);
-        console.log('Parsed filter data:', data);
-        
-        setBranches(data.branches || []);
-        setYears(data.years || []);
-        setSections(data.sections || []);
-        setSemesters(data.semesters || []);
-      } catch (parseError) {
-        console.error('Error parsing JSON:', parseError);
-      }
+      const data = response.data;
+      setBranches(data.branches || []);
+      setYears(data.years || []);
+      setSections(data.sections || []);
+      setSemesters(data.semesters || []);
     } catch (error) {
       console.error('Error fetching filters:', error);
     }
@@ -101,51 +89,36 @@ const HODDashboard = ({ token }) => {
       if (filters.section) params.append('section', filters.section);
       if (filters.semester) params.append('semester', filters.semester);
       
-      const response = await fetch(`http://127.0.0.1:5000/api/hod/students?${params.toString()}`, {
-        method: 'GET',
+      const response = await axios.get(`http://localhost:5000/api/hod/students?${params.toString()}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Content-Type': 'application/json'
         }
       });
       
-      console.log('Students response status:', response.status);
-      const responseText = await response.text();
-      console.log('Raw students response:', responseText);
+      const data = response.data;
+      setStudents(data);
       
-      try {
-        const data = JSON.parse(responseText);
-        setStudents(data);
-        
-        // Calculate statistics
-        const performanceBreakdown = {
-          Topper: 0, 
-          Average: 0,
-          Duller: 0
-        };
-        
-        data.forEach(student => {
-          if (student.performance_type) {
-            performanceBreakdown[student.performance_type]++;
-          }
-        });
-        
-        setStats({
-          totalStudents: data.length,
-          performanceBreakdown: {
-            Topper: performanceBreakdown.Topper || 0,
-            Average: performanceBreakdown.Average || 0,
-            Duller: performanceBreakdown.Duller || 0
-          }
-        });
-      } catch (parseError) {
-        console.error('Error parsing students JSON:', parseError);
-      }
+      // Calculate statistics
+      const performanceBreakdown = {
+        Topper: 0,
+        Average: 0,
+        Duller: 0
+      };
       
-      setLoading(false);
+      data.forEach(student => {
+        if (student.performance_type) {
+          performanceBreakdown[student.performance_type]++;
+        }
+      });
+      
+      setStats({
+        totalStudents: data.length,
+        performanceBreakdown
+      });
     } catch (error) {
       console.error('Error fetching students:', error);
+    } finally {
       setLoading(false);
     }
   };
@@ -175,13 +148,9 @@ const HODDashboard = ({ token }) => {
             <label>Branch:</label>
             <select name="branch" value={filters.branch} onChange={handleFilterChange}>
               <option value="">All Branches</option>
-              {branches.length > 0 ? (
-                branches.map((branch, index) => (
-                  <option key={index} value={branch}>{branch}</option>
-                ))
-              ) : (
-                <option disabled>No branches found</option>
-              )}
+              {branches.map((branch, index) => (
+                <option key={index} value={branch}>{branch.toUpperCase()}</option>
+              ))}
             </select>
           </div>
           
@@ -265,7 +234,7 @@ const HODDashboard = ({ token }) => {
               </thead>
               <tbody>
                 {students.map((student) => (
-                  <tr key={student._id} className={`performance-${student.performance_type}`}>
+                  <tr key={student._id} className={`performance-${student.performance_type?.toLowerCase()}`}>
                     <td>{student.name || student.username || 'N/A'}</td>
                     <td>{student.roll_no || 'N/A'}</td>
                     <td>{student.branch || 'N/A'}</td>

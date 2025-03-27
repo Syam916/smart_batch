@@ -15,20 +15,34 @@ const AddStudentForm = () => {
     marks: {}
   });
 
-  // Added students history
-  const [students, setStudents] = useState([]);
+  // Recently added students history
+  const [recentStudents, setRecentStudents] = useState([]);
   
   // UI state
   const [loading, setLoading] = useState(false);
-  const [loadingStudents, setLoadingStudents] = useState(false);
+  const [loadingRecent, setLoadingRecent] = useState(true);
   
   // Dynamic fields based on year
   const [semesterFields, setSemesterFields] = useState([]);
 
-  // Load existing students on component mount
+  // Fetch recently added students when component mounts
   useEffect(() => {
-    fetchStudents();
+    fetchRecentStudents();
   }, []);
+
+  const fetchRecentStudents = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/students/recent', {
+        withCredentials: true
+      });
+      setRecentStudents(response.data);
+    } catch (error) {
+      console.error('Error fetching recent students:', error);
+      toast.error('Failed to fetch recent students');
+    } finally {
+      setLoadingRecent(false);
+    }
+  };
 
   // Update semester fields when year changes
   useEffect(() => {
@@ -55,21 +69,6 @@ const AddStudentForm = () => {
       marks: updatedMarks
     });
   }, [formData.year]);
-
-  const fetchStudents = async () => {
-    setLoadingStudents(true);
-    try {
-      const response = await axios.get('http://localhost:5000/api/students', {
-        withCredentials: true
-      });
-      setStudents(response.data);
-    } catch (error) {
-      toast.error('Failed to fetch students');
-      console.error('Error fetching students:', error);
-    } finally {
-      setLoadingStudents(false);
-    }
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -142,6 +141,12 @@ const AddStudentForm = () => {
         withCredentials: true
       });
       
+      // Add the new student to the recent students list
+      setRecentStudents(prevStudents => [
+        { ...studentData, _id: response.data.id },
+        ...prevStudents
+      ].slice(0, 10)); // Keep only the 10 most recent students
+      
       toast.success('Student added successfully!');
       
       // Reset form
@@ -153,9 +158,6 @@ const AddStudentForm = () => {
         section: 'A',
         marks: {}
       });
-      
-      // Refresh student list
-      fetchStudents();
     } catch (error) {
       toast.error('Failed to add student');
       console.error('Error adding student:', error);
@@ -198,52 +200,50 @@ const AddStudentForm = () => {
             />
           </div>
           
-          <div className="form-row">
-            <div className="form-group">
-              <label>Branch</label>
-              <select 
-                name="branch" 
-                value={formData.branch}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select Branch</option>
-                <option value="cse">Computer Science</option>
-                <option value="ece">Electronics</option>
-                <option value="mech">Mechanical</option>
-                <option value="civil">Civil</option>
-                <option value="eee">Electrical</option>
-              </select>
-            </div>
-            
-            <div className="form-group">
-              <label>Year</label>
-              <select 
-                name="year" 
-                value={formData.year}
-                onChange={handleChange}
-                required
-              >
-                <option value="1">First Year</option>
-                <option value="2">Second Year</option>
-                <option value="3">Third Year</option>
-                <option value="4">Fourth Year</option>
-              </select>
-            </div>
-            
-            <div className="form-group">
-              <label>Section</label>
-              <select 
-                name="section" 
-                value={formData.section}
-                onChange={handleChange}
-                required
-              >
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
-              </select>
-            </div>
+          <div className="form-group">
+            <label>Branch</label>
+            <select 
+              name="branch" 
+              value={formData.branch}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select Branch</option>
+              <option value="cse">Computer Science</option>
+              <option value="ece">Electronics</option>
+              <option value="mech">Mechanical</option>
+              <option value="civil">Civil</option>
+              <option value="eee">Electrical</option>
+            </select>
+          </div>
+          
+          <div className="form-group">
+            <label>Year</label>
+            <select 
+              name="year" 
+              value={formData.year}
+              onChange={handleChange}
+              required
+            >
+              <option value="1">First Year</option>
+              <option value="2">Second Year</option>
+              <option value="3">Third Year</option>
+              <option value="4">Fourth Year</option>
+            </select>
+          </div>
+          
+          <div className="form-group">
+            <label>Section</label>
+            <select 
+              name="section" 
+              value={formData.section}
+              onChange={handleChange}
+              required
+            >
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+            </select>
           </div>
           
           <div className="semester-marks-section">
@@ -278,17 +278,17 @@ const AddStudentForm = () => {
         </form>
       </div>
       
-      {/* Right section - Student History */}
+      {/* Right section - Recently Added Students */}
       <div className="student-history-section">
         <div className="history-header">
-          <h2><FaList className="icon" /> Student Records</h2>
-          <p>Recently added students</p>
+          <h2><FaList className="icon" /> Recently Added Students</h2>
+          <p>Last {recentStudents.length} students added</p>
         </div>
         
         <div className="students-list">
-          {loadingStudents ? (
-            <div className="loading-message">Loading students...</div>
-          ) : students.length === 0 ? (
+          {loadingRecent ? (
+            <div className="loading-message">Loading recent students...</div>
+          ) : recentStudents.length === 0 ? (
             <div className="empty-message">
               <FaUserGraduate className="empty-icon" />
               <p>No students added yet</p>
@@ -306,7 +306,7 @@ const AddStudentForm = () => {
                 </tr>
               </thead>
               <tbody>
-                {students.map((student) => (
+                {recentStudents.map((student) => (
                   <tr key={student._id}>
                     <td>{student.rollNumber}</td>
                     <td>{student.username}</td>
