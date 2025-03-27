@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FaGraduationCap, FaSignOutAlt, FaUser, FaUserPlus, FaUsers } from 'react-icons/fa';
 import './Navbar.css';
 
-const Navbar = ({ auth, logout }) => {
+const Navbar = ({ auth = {}, logout }) => {
   const { isAuthenticated, role } = auth;
 
   return (
