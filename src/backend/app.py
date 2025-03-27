@@ -152,5 +152,41 @@ def test_db():
             'message': str(e)
         }), 500
  
+@app.route('/api/student/data/<username>', methods=['GET'])
+def get_student_data(username):
+    try:
+        # First look up the user in user_data to get their branch
+        user = db.user_data.find_one({"username": username})
+        
+        if not user:
+            return jsonify({"message": "User not found"}), 404
+        
+        # Get the branch from user data
+        branch = user.get('branch')
+        
+        if not branch:
+            return jsonify({"message": "User branch information missing"}), 400
+        
+        # Now query the branch-specific collection to get student details
+        branch_collection = db[branch.lower()]  # Convert branch to lowercase for collection name
+        
+        # Find student by username in the branch collection
+        student = branch_collection.find_one({"username": username})
+        
+        if not student:
+            return jsonify({"message": f"Student not found in {branch} collection"}), 404
+        
+        # Convert ObjectId to string for JSON serialization
+        student['_id'] = str(student['_id'])
+        
+        # Add branch information if not already present in student data
+        if 'branch' not in student:
+            student['branch'] = branch
+        
+        return jsonify(student)
+    except Exception as e:
+        print(f"Error fetching student data: {e}")
+        return jsonify({"message": f"Server error: {str(e)}"}), 500
+ 
 if __name__ == '__main__':
     app.run(debug=True)

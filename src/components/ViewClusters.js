@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { FaUsers, FaFilter, FaFileExport, FaUserFriends, FaExchangeAlt } from 'react-icons/fa';
+import { FaUsers, FaFilter, FaFileExport, FaUserFriends, FaExchangeAlt, FaPlus, FaRandom, FaCheckCircle, FaTimesCircle, FaChartLine, FaArrowRight, FaRegListAlt, FaUserGraduate, FaSave, FaLayerGroup, FaTrophy, FaIdCard } from 'react-icons/fa';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './ViewClusters.css';
@@ -34,6 +34,9 @@ const ViewClusters = ({ token }) => {
   });
   const [loading, setLoading] = useState(false);
   const [createTeamLoading, setCreateTeamLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [savedBatchData, setSavedBatchData] = useState(null);
+  const [hasChanges, setHasChanges] = useState(false);
   const navigate = useNavigate();
 
   const branches = ['CSE', 'IT', 'ECE', 'EEE', 'MECH'];
@@ -82,18 +85,85 @@ const ViewClusters = ({ token }) => {
       
       console.log("Query params:", queryParams.toString());
       
+      // First check if we have saved batches for these filters
+      if (filters.branch && filters.year && filters.section) {
+        try {
+          const savedBatchesResponse = await axios.get(
+            `http://localhost:5000/api/hod/saved-batches?branch=${filters.branch}&year=${filters.year}&section=${filters.section}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            }
+          );
+          
+          if (savedBatchesResponse.data && savedBatchesResponse.data.batches) {
+            setSavedBatchData(savedBatchesResponse.data);
+            console.log("Loaded saved batches:", savedBatchesResponse.data);
+          }
+        } catch (error) {
+          console.log("No saved batches found for these filters");
+        }
+      }
+      
+      // Get students matching the filter
       const response = await axios.get(`http://localhost:5000/api/hod/students?${queryParams}`, {
         withCredentials: true
       });
       
       console.log("Response data:", response.data);
-      setFilteredStudents(response.data);
-      setBatches([]);
       
-      if (response.data.length === 0) {
+      // Create a copy of the response data to avoid mutation issues
+      const students = [...response.data];
+      
+      // Sort students by average marks in descending order
+      const sortedStudents = students.sort((a, b) => {
+        const aMarks = a.avgMarks !== undefined ? a.avgMarks : a.average_marks;
+        const bMarks = b.avgMarks !== undefined ? b.avgMarks : b.average_marks;
+        return bMarks - aMarks;
+      });
+
+      // Add explicit rank property to each student
+      const rankedStudents = sortedStudents.map((student, index) => {
+        return {
+          ...student,
+          rank: index + 1
+        };
+      });
+      
+      setFilteredStudents(rankedStudents);
+      
+      // If we have saved batches, check if students match
+      if (savedBatchData) {
+        // Extract all student IDs from saved batches
+        const savedStudentIds = savedBatchData.batches.flat().map(student => student._id);
+        
+        // Check if current students match saved students
+        const currentStudentIds = rankedStudents.map(student => student._id);
+        
+        // Check for new students
+        const hasNewStudents = currentStudentIds.some(id => !savedStudentIds.includes(id));
+        
+        // Check for missing students
+        const hasMissingStudents = savedStudentIds.some(id => !currentStudentIds.includes(id));
+        
+        if (hasNewStudents || hasMissingStudents) {
+          toast.warning('Student data has changed since batches were last saved. Please create new batches.');
+          setHasChanges(true);
+          setBatches([]);
+        } else {
+          // Load the saved batches
+          setBatches(savedBatchData.batches);
+          toast.success('Loaded saved batches for these filters');
+        }
+      } else {
+        setBatches([]);
+      }
+      
+      if (rankedStudents.length === 0) {
         toast.info('No students match the selected filters');
       } else {
-        toast.success(`Found ${response.data.length} students`);
+        toast.success(`Found ${rankedStudents.length} students`);
       }
     } catch (error) {
       toast.error('Failed to fetch students');
@@ -138,6 +208,7 @@ const ViewClusters = ({ token }) => {
     }
     
     // Sort students by avgMarks (handling both property names)
+    // Make sure we keep all properties including rank
     const sortedStudents = [...filteredStudents].sort((a, b) => {
       const aMarks = a.avgMarks !== undefined ? a.avgMarks : a.average_marks;
       const bMarks = b.avgMarks !== undefined ? b.avgMarks : b.average_marks;
@@ -161,6 +232,7 @@ const ViewClusters = ({ token }) => {
     );
     
     setBatches(createdBatches);
+    setHasChanges(true);
     
     const extraBatch = totalStudents > totalRequiredSlots;
     const batchCount = extraBatch ? numberOfBatches + 1 : numberOfBatches;
@@ -290,7 +362,7 @@ const ViewClusters = ({ token }) => {
         rows.push([
           `Team ${teamIndex + 1}`,
           member.name,
-          member.roll_no,
+          member.rollNumber,
           member.performance_type,
           member.average_marks.toFixed(2)
         ]);
@@ -352,6 +424,7 @@ const ViewClusters = ({ token }) => {
     
     // Update state
     setBatches(newBatches);
+    setHasChanges(true);
     
     // Calculate new averages
     const sourceBatchAvg = calculateBatchAverage(newBatches[selectedStudent.batchIndex]);
@@ -410,18 +483,18 @@ const ViewClusters = ({ token }) => {
                     className="confirm-move-button"
                     onClick={moveStudent}
                   >
-                    <FaExchangeAlt className="icon" /> Confirm Move
+                    <FaCheckCircle /> Confirm Move
                   </button>
                 </div>
               ) : (
                 <div className="select-target-prompt">
-                  Now select a target batch
+                  <FaArrowRight /> Now select a target batch
                 </div>
               )}
             </div>
           ) : (
             <div className="selection-prompt">
-              Select a student to move
+              <FaUserGraduate /> Select a student to move
             </div>
           )}
           
@@ -429,7 +502,7 @@ const ViewClusters = ({ token }) => {
             className="cancel-swap-button"
             onClick={cancelSwap}
           >
-            Cancel
+            <FaTimesCircle /> Cancel
           </button>
         </div>
       </div>
@@ -447,34 +520,137 @@ const ViewClusters = ({ token }) => {
           onClick={() => showSwapInterface && selectedStudent && handleBatchSelect(batchIndex)}
         >
           <div className="batch-header">
-            <h4>Batch {batchIndex + 1}</h4>
+            <h4><FaLayerGroup className="icon" /> Batch {batchIndex + 1}</h4>
             <span className="batch-avg">
               Avg: {calculateBatchAverage(batch).toFixed(1)}
             </span>
           </div>
           <div className="batch-members">
-            {batch.map(student => (
-              <div 
-                className={`student-item ${showSwapInterface ? 'selectable' : ''} ${
-                  selectedStudent && selectedStudent.student._id === student._id ? 'selected' : ''
-                }`} 
-                key={student._id}
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent triggering batch click
-                  showSwapInterface && handleStudentSelect(batchIndex, student);
-                }}
-              >
-                <div className="student-name">{student.username}</div>
-                <div className="student-marks">
-                  {student.avgMarks !== undefined ? student.avgMarks : student.average_marks}
+            {batch.map(student => {
+              const marks = student.avgMarks !== undefined ? student.avgMarks : student.average_marks;
+              return (
+                <div 
+                  className={`student-item ${showSwapInterface ? 'selectable' : ''} ${
+                    selectedStudent && selectedStudent.student._id === student._id ? 'selected' : ''
+                  }`} 
+                  key={student._id}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering batch click
+                    showSwapInterface && handleStudentSelect(batchIndex, student);
+                  }}
+                >
+                  <div className="student-info">
+                    <div className="student-name">{student.username}</div>
+                    <div className="student-details">
+                      <span className="student-roll"><FaIdCard className="icon" /> {student.rollNumber || student.roll_no || 'N/A'}</span>
+                      <span className="student-rank"><FaTrophy className="icon" /> {student.rank || '-'}</span>
+                    </div>
+                  </div>
+                  <div 
+                    className="student-marks"
+                    data-value={marks}
+                  >
+                    {marks}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       ))}
     </div>
   );
+
+  const saveBatches = async () => {
+    if (!batches.length) {
+      toast.error('No batches to save');
+      return;
+    }
+    
+    if (!filters.branch || !filters.year || !filters.section) {
+      toast.error('Please select branch, year, and section before saving');
+      return;
+    }
+    
+    setSaveLoading(true);
+    
+    try {
+      // Simple data format with minimal processing
+      const batchesToSave = batches.map(batch => 
+        batch.map(student => ({
+          _id: student._id,
+          username: student.username,
+          roll_no: student.roll_no || student.rollNumber,
+          rank: student.rank || 0,
+          average_marks: student.avgMarks !== undefined ? student.avgMarks : student.average_marks,
+          branch: student.branch || filters.branch,
+          year: student.year || filters.year,
+          section: student.section || filters.section
+        }))
+      );
+      
+      // Create a document ID
+      const documentId = `${filters.year}_${filters.branch.toLowerCase()}_${filters.section}`;
+      
+      console.log(`Attempting to save batches with ID: ${documentId}`);
+      console.log(`Number of batches: ${batchesToSave.length}`);
+      
+      // Simple axios call with no withCredentials
+      const response = await axios.post(
+        'http://localhost:5000/api/hod/save-batches', 
+        {
+          branch: filters.branch,
+          year: filters.year,
+          section: filters.section,
+          batches: batchesToSave
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token || 'dummy-token'}`
+          }
+        }
+      );
+      
+      toast.success('Batches saved successfully!');
+      setHasChanges(false);
+      setSavedBatchData({
+        document_id: documentId,
+        branch: filters.branch,
+        year: filters.year,
+        section: filters.section,
+        batches: batchesToSave
+      });
+      
+    } catch (error) {
+      console.error('Error saving batches:', error);
+      toast.error(`Failed to save batches: Network error`);
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
+  // Render the save button component
+  const SaveBatchButton = () => {
+    if (!batches.length) return null;
+    
+    return (
+      <div className="save-batch-container">
+        <button 
+          className={`save-batch-button ${hasChanges ? 'has-changes' : ''}`}
+          onClick={saveBatches}
+          disabled={saveLoading}
+        >
+          <FaSave /> {saveLoading ? 'Saving...' : hasChanges ? 'Save Changes' : 'Save Batches'}
+        </button>
+        {hasChanges && savedBatchData && (
+          <div className="changes-warning">
+            <p>You have unsaved changes to these batches.</p>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="view-clusters-container">
@@ -544,7 +720,7 @@ const ViewClusters = ({ token }) => {
           <div className="header-actions">
             {filteredStudents.length > 0 && !batches.length && (
               <button className="create-batch-button" onClick={toggleBatchForm}>
-                Create Batches
+                <FaPlus /> Create Batches
               </button>
             )}
             {batches.length > 0 && (
@@ -552,7 +728,7 @@ const ViewClusters = ({ token }) => {
                 className={`swap-button ${showSwapInterface ? 'active' : ''}`} 
                 onClick={toggleSwapInterface}
               >
-                <FaExchangeAlt className="icon" /> {showSwapInterface ? 'Cancel Swapping' : 'Swap Students'}
+                <FaExchangeAlt /> {showSwapInterface ? 'Cancel Swapping' : 'Swap Students'}
               </button>
             )}
           </div>
@@ -588,7 +764,7 @@ const ViewClusters = ({ token }) => {
                 className="create-button"
                 onClick={handleCreateBatches}
               >
-                Generate Balanced Batches
+                <FaRandom /> Generate Balanced Batches
               </button>
             </div>
           </div>
@@ -600,14 +776,17 @@ const ViewClusters = ({ token }) => {
           <div className="loading-message">Loading students...</div>
         ) : batches.length > 0 ? (
           <div className="batches-display">
-            <h3>Generated Balanced Batches</h3>
+            <h3><FaLayerGroup className="icon" /> Generated Balanced Batches</h3>
             {batchesDisplayJSX}
+            <SaveBatchButton />
           </div>
         ) : filteredStudents.length > 0 ? (
           <table className="students-table">
             <thead>
               <tr>
+                <th>Rank</th>
                 <th>Username</th>
+                <th>Roll Number</th>
                 <th>Branch</th>
                 <th>Year</th>
                 <th>Section</th>
@@ -617,7 +796,9 @@ const ViewClusters = ({ token }) => {
             <tbody>
               {filteredStudents.map(student => (
                 <tr key={student._id}>
+                  <td>{student.rank}</td>
                   <td>{student.username}</td>
+                  <td>{student.rollNumber}</td>
                   <td>{student.branch}</td>
                   <td>{student.year}</td>
                   <td>{student.section}</td>

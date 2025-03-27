@@ -85,7 +85,7 @@ def get_student(student_id):
         
         for collection in collections:
             if collection in db.list_collection_names():
-                student = db[collection].find_one({"_id": ObjectId(student_id)})
+                student = db[collection].find_one({"username": student_id})
                 if student:
                     break
         
@@ -95,5 +95,41 @@ def get_student(student_id):
         student['_id'] = str(student['_id'])
         return jsonify(student)
     except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@student_bp.route('/api/student/data/<username>', methods=['GET'])
+def get_student_data_by_username(username):
+    try:
+        # First look up the user in user_data to get their branch
+        user = db.user_data.find_one({"username": username})
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+        
+        # Get the branch from user data
+        branch = user.get('branch')
+        
+        if not branch:
+            return jsonify({"error": "User branch information missing"}), 400
+        
+        # Now query the branch-specific collection to get student details
+        branch_collection = db[branch.lower()]  # Convert branch to lowercase for collection name
+        
+        # Find student by username in the branch collection
+        student = branch_collection.find_one({"username": username})
+        
+        if not student:
+            return jsonify({"error": f"Student not found in {branch} collection"}), 404
+        
+        # Convert ObjectId to string for JSON serialization
+        student['_id'] = str(student['_id'])
+        
+        # Add branch information if not already present in student data
+        if 'branch' not in student:
+            student['branch'] = branch
+        
+        return jsonify(student)
+    except Exception as e:
+        print(f"Error fetching student data: {e}")
         return jsonify({"error": str(e)}), 500
 

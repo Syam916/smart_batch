@@ -1,5 +1,6 @@
 .hod-dashboard {
   padding: 20px;
+  font-family: 'Roboto', Arial, sans-serif;
   background-color: #f5f7fa;
   min-height: calc(100vh - 60px);
 }
@@ -7,7 +8,9 @@
 .dashboard-header {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #eaeaea;
+  padding-bottom: 15px;
   background-color: #fff;
   padding: 15px 20px;
   border-radius: 8px;
@@ -16,10 +19,11 @@
 
 .dashboard-header h2 {
   margin: 0;
-  font-size: 1.6rem;
-  color: #334155;
+  color: #333;
   display: flex;
   align-items: center;
+  gap: 10px;
+  font-size: 24px;
 }
 
 .dashboard-header h2 svg {
@@ -28,20 +32,20 @@
 }
 
 .filters-section {
-  background-color: #fff;
-  border-radius: 8px;
+  background-color: #f8f9fa;
   padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .filters-section h3 {
   margin-top: 0;
-  margin-bottom: 15px;
-  color: #334155;
   display: flex;
   align-items: center;
-  font-size: 1.2rem;
+  gap: 10px;
+  color: #444;
+  font-size: 18px;
 }
 
 .filters-section h3 svg {
@@ -52,29 +56,27 @@
 .filters-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 20px;
 }
 
 .filter-item {
-  display: flex;
-  flex-direction: column;
-  min-width: 200px;
   flex: 1;
+  min-width: 200px;
 }
 
 .filter-item label {
-  margin-bottom: 5px;
-  font-weight: 600;
-  color: #64748b;
-  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
 }
 
 .filter-item select {
+  width: 100%;
   padding: 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  background-color: #f8fafc;
-  font-size: 0.9rem;
+  font-size: 14px;
 }
 
 .dashboard-content {
@@ -83,77 +85,113 @@
 
 .loading {
   text-align: center;
-  padding: 40px;
-  font-size: 1.1rem;
-  color: #64748b;
+  padding: 50px;
+  font-size: 18px;
+  color: #555;
 }
 
-.stats-container {
-  display: flex;
-  flex-wrap: wrap;
+.stats-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
   margin-bottom: 30px;
 }
 
 .stats-card {
-  background-color: #fff;
+  background-color: white;
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  flex: 1;
-  min-width: 250px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.total-students {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .stats-card h3 {
   margin-top: 0;
-  margin-bottom: 15px;
-  color: #334155;
-  font-size: 1.1rem;
-  text-align: center;
+  color: #555;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .stats-value {
-  font-size: 3rem;
-  font-weight: bold;
-  color: #3b82f6;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 10px 0;
 }
 
-.performance-breakdown {
-  flex: 2;
+.total-students .stats-value {
+  color: #4361ee;
+}
+
+.average-marks .stats-value {
+  color: #3a86ff;
+}
+
+.highest-marks .stats-value {
+  color: #38b000;
+}
+
+.lowest-marks .stats-value {
+  color: #d90429;
+}
+
+.pass-rate .stats-value {
+  color: #7400b8;
+}
+
+.charts-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.performance-breakdown,
+.marks-distribution {
+  background: white;
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.performance-breakdown h3,
+.marks-distribution h3 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #444;
+  font-size: 18px;
 }
 
 .stats-chart {
-  height: 200px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  height: 300px;
+  position: relative;
+  margin-bottom: 20px;
 }
 
 .stats-legend {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
+  gap: 8px;
+  font-size: 14px;
 }
 
 .legend-color {
-  display: block;
-  width: 16px;
-  height: 16px;
-  margin-right: 6px;
-  border-radius: 3px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
 }
 
 .legend-color.topper {
@@ -166,6 +204,59 @@
 
 .legend-color.duller {
   background-color: rgba(255, 99, 132, 0.6);
+}
+
+.distribution-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.mark-range {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #444;
+  font-size: 14px;
+}
+
+.count {
+  font-size: 15px;
+  color: #555;
+}
+
+.mark-range.below40 {
+  color: #d90429;
+}
+
+.mark-range.range40-50 {
+  color: #e85d04;
+}
+
+.mark-range.range50-60 {
+  color: #faa307;
+}
+
+.mark-range.range60-70 {
+  color: #52b69a;
+}
+
+.mark-range.range70-85 {
+  color: #3a86ff;
+}
+
+.mark-range.above85 {
+  color: #7400b8;
 }
 
 .students-table-container {
@@ -216,4 +307,47 @@
 
 .performance-duller {
   background-color: rgba(255, 99, 132, 0.1);
+}
+
+.performance-Topper {
+  background-color: rgba(75, 192, 192, 0.1);
+}
+
+.performance-Average {
+  background-color: rgba(255, 206, 86, 0.1);
+}
+
+.performance-Duller {
+  background-color: rgba(255, 99, 132, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .charts-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .distribution-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .distribution-summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-overview {
+    grid-template-columns: 1fr;
+  }
+  
+  .filter-item {
+    min-width: 100%;
+  }
 } 

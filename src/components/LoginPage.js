@@ -28,12 +28,15 @@ const LoginPage = ({ login }) => {
       const response = await axios.post('http://localhost:5000/api/login', {
         username: formData.username,
         password: formData.password
-
       }, {
         withCredentials: true // Important for cookies/sessions
       });
       
       const { user_id, username, role } = response.data;
+      
+      // Store username in localStorage for student dashboard to use
+      localStorage.setItem('username', username);
+      
       login(user_id, role);
       toast.success('Login successful!');
     } catch (error) {

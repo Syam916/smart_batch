@@ -1,239 +1,436 @@
+/* Modern Professional Dashboard Styling */
 .student-dashboard {
-  padding: 2rem;
-  margin-top: 60px;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background-color: #f5f7fa;
   min-height: 100vh;
+  padding-bottom: 2rem;
 }
 
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* Header Styling */
 .dashboard-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-title {
+  color: #2c3e50;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  font-size: 2.2rem;
+}
+
+.dashboard-subtitle {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+/* Profile Section */
+.profile-section {
   margin-bottom: 2rem;
 }
 
 .student-profile-card {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
+  border: none;
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.profile-header {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  padding: 2rem;
-  background-color: #f8f9fa;
+.student-profile-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
-.profile-avatar {
-  width: 100px;
-  height: 100px;
-  background-color: #e0e0e0;
-  border-radius: 50%;
+.profile-avatar-container {
   display: flex;
-  align-items: center;
   justify-content: center;
-}
-
-.avatar-icon {
-  font-size: 3rem;
-  color: #7f8c8d;
-}
-
-.profile-info h3 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #2c3e50;
-}
-
-.roll-no {
-  color: #7f8c8d;
-  margin: 0.5rem 0;
-}
-
-.performance-badge {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  color: white;
-  font-weight: 500;
-}
-
-.profile-details {
-  padding: 2rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-}
-
-.detail-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.detail-item .label {
-  color: #7f8c8d;
-  font-size: 0.875rem;
-}
-
-.detail-item .value {
-  font-size: 1.125rem;
-  font-weight: 500;
-  color: #2c3e50;
-}
-
-.dashboard-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.semester-marks-card,
-.team-card {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-items: center;
   padding: 1.5rem;
 }
 
-.marks-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-.marks-table th,
-.marks-table td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.marks-table th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-}
-
-.team-members {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.team-member {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-}
-
-.member-avatar {
-  width: 40px;
-  height: 40px;
-  background-color: #e0e0e0;
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #3498db, #2980b9);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
+  box-shadow: 0 4px 10px rgba(41, 128, 185, 0.3);
 }
 
-.member-info h4 {
-  margin: 0;
+.avatar-icon {
+  font-size: 3.5rem;
+}
+
+.student-name {
+  font-size: 1.8rem;
+  font-weight: 700;
   color: #2c3e50;
+  margin-bottom: 1.2rem;
+  margin-top: 1rem;
 }
 
-.member-info p {
-  margin: 0.25rem 0;
-  color: #7f8c8d;
-  font-size: 0.875rem;
+.student-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
 }
 
-.loading-container {
+.meta-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  height: 100vh;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+.meta-icon {
+  color: #3498db;
+  display: flex;
+  align-items: center;
+}
+
+.meta-label {
   color: #7f8c8d;
-}
-
-.error-container {
-  text-align: center;
-  padding: 2rem;
-  color: #e74c3c;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-top: 2rem;
-}
-
-.dashboard-title {
-  color: #333;
-  text-align: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #3f51b5;
-}
-
-.student-info-card, .performance-card, .marks-card {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  margin-bottom: 20px;
-  transition: transform 0.3s ease;
-}
-
-.student-info-card:hover, .performance-card:hover, .marks-card:hover {
-  transform: translateY(-5px);
-}
-
-.student-info-card .card-header, 
-.performance-card .card-header,
-.marks-card .card-header {
-  background-color: #3f51b5;
-  color: white;
   font-weight: 500;
 }
 
-.student-info-card .row {
-  padding: 5px 0;
+.meta-value {
+  font-weight: 600;
+  color: #34495e;
 }
 
-.student-info-card .row:nth-child(even) {
-  background-color: rgba(63, 81, 181, 0.05);
+/* Card Styling */
+.stats-card {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.marks-card table thead {
-  background-color: #e0e0e0;
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
-.marks-card table tbody tr:hover {
-  background-color: rgba(63, 81, 181, 0.1);
+.stats-card .card-header {
+  background-color: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 1.2rem 1.5rem;
 }
 
-/* Add responsive adjustments */
-@media (max-width: 768px) {
-  .student-dashboard .container {
-    padding: 0 10px;
-  }
-  
-  .dashboard-title {
-    font-size: 1.5rem;
-  }
+.stats-card .card-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-/* Add styles for good/average/poor performance */
+.stats-card .card-header h3 svg {
+  color: #3498db;
+}
+
+.stats-card .card-body {
+  padding: 1.5rem;
+}
+
+/* Table Styling */
+.info-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.info-table tr {
+  transition: background-color 0.2s ease;
+}
+
+.info-table tr:hover {
+  background-color: rgba(52, 152, 219, 0.05);
+}
+
+.info-table td {
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.info-table tr:last-child td {
+  border-bottom: none;
+}
+
+.info-table td:first-child {
+  font-weight: 600;
+  color: #7f8c8d;
+  width: 40%;
+}
+
+.info-table td:last-child {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.highlight-row {
+  background-color: rgba(52, 152, 219, 0.05);
+}
+
+.highlight-row td {
+  font-size: 1.1rem;
+  font-weight: 700 !important;
+}
+
+/* Chart Styling */
+.chart-card {
+  height: calc(100% - 2rem);
+}
+
+.chart-container {
+  position: relative;
+  padding: 1rem 0;
+}
+
+.chart-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #7f8c8d;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 220px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.doughnut-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.center-value {
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+/* Insights Section */
+.insights-section {
+  margin-top: 1rem;
+}
+
+.insights-card {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.insight-container {
+  padding: 1rem;
+}
+
+.insight-container h4 {
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.insight-container p {
+  color: #7f8c8d;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+/* Performance Colors */
+.excellent-performance {
+  color: #27ae60 !important;
+}
+
 .good-performance {
-  color: #28a745;
+  color: #2980b9 !important;
 }
 
 .average-performance {
-  color: #ffc107;
+  color: #f39c12 !important;
 }
 
 .poor-performance {
-  color: #dc3545;
+  color: #e74c3c !important;
+}
+
+/* Loading Animation */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  text-align: center;
+}
+
+.loading-container h3 {
+  color: #2c3e50;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.loading-container p {
+  color: #7f8c8d;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #3498db;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error Styling */
+.error-container {
+  background-color: white;
+  border-radius: 12px;
+  padding: 2.5rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 500px;
+  margin: 0 auto;
+  margin-top: 3rem;
+}
+
+.error-icon {
+  color: #e74c3c;
+  margin-bottom: 1.5rem;
+}
+
+.error-container h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.error-container p {
+  color: #7f8c8d;
+  margin-bottom: 1.5rem;
+}
+
+.retry-button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.retry-button:hover {
+  background-color: #2980b9;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .dashboard-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .dashboard-title {
+    font-size: 1.8rem;
+  }
+  
+  .student-name {
+    font-size: 1.5rem;
+    margin-top: 0;
+  }
+  
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .avatar-icon {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-title {
+    font-size: 1.6rem;
+  }
+  
+  .student-meta {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .chart-wrapper {
+    height: 180px;
+  }
+  
+  .profile-avatar-container {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .dashboard-container {
+    padding: 1rem 0.75rem;
+  }
+  
+  .dashboard-title {
+    font-size: 1.4rem;
+  }
+  
+  .dashboard-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .info-table td {
+    padding: 0.75rem 1rem;
+  }
+  
+  .student-profile-card .card-body {
+    padding: 1rem;
+  }
+  
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .avatar-icon {
+    font-size: 2.5rem;
+  }
 } 

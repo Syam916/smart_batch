@@ -1,10 +1,25 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaGraduationCap, FaSignOutAlt, FaUser, FaUserPlus, FaUsers } from 'react-icons/fa';
 import './Navbar.css';
 
 const Navbar = ({ auth = {}, logout }) => {
   const { isAuthenticated, role } = auth;
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    // IMPORTANT: First clear all localStorage items
+    localStorage.clear();
+    
+    // Check if custom logout function was provided and use it
+    if (typeof logout === 'function') {
+      logout();
+    } else {
+      // Otherwise use the default redirect
+      console.log("Redirecting to login page...");
+      window.location.href = '/login'; // Force page reload for clean logout
+    }
+  };
 
   return (
     <nav className="navbar">
@@ -32,7 +47,7 @@ const Navbar = ({ auth = {}, logout }) => {
                 <FaUser /> Dashboard
               </Link>
             )}
-            <button className="logout-btn" onClick={logout}>
+            <button className="logout-btn" onClick={handleLogout}>
               <FaSignOutAlt /> Logout
             </button>
           </>
