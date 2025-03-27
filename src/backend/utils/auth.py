@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import request, jsonify, session
 from bson import ObjectId
-import jwt
+# import jwt
 import logging
 
 # Import db from db_config instead of app
