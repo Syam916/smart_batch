@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from bson import ObjectId
 import json
 
+
 # Import your database configuration
 from db_config import db
 
@@ -71,4 +72,5 @@ def get_student(student_id):
         student['_id'] = str(student['_id'])
         return jsonify(student)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500 
+        return jsonify({"error": str(e)}), 500
+
